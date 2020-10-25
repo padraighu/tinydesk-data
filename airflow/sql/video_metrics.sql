@@ -1,0 +1,11 @@
+WITH video_metrics AS
+	(SELECT
+	VIDEO_ID
+	, TITLE
+	, VIEW_COUNT
+	, COMMENT_COUNT
+	, LIKE_COUNT
+	, DISLIKE_COUNT
+	FROM VIDEO)
+SELECT JSON_AGG(video_metrics)
+FROM video_metrics;

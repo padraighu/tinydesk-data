@@ -1,0 +1,55 @@
+version: "3.7"
+
+services:
+  airflow:
+    build: ./airflow
+    depends_on:
+      - db
+    restart: always
+    volumes:
+      - ./airflow/dags:/usr/local/airflow/dags
+      - ./airflow/sql:/usr/local/airflow/sql
+    ports:
+      - 8080:8080
+    environment:
+      # set up postgres connection on startup
+      # https://github.com/puckel/docker-airflow/issues/238#issuecomment-511281334
+      AIRFLOW__CORE__FERNET_KEY: "${AIRFLOW__CORE__FERNET_KEY}"
+      AIRFLOW_CONN_TINYDESK_POSTGRES: "${AIRFLOW_CONN_TINYDESK_POSTGRES}"
+      AIRFLOW_CONN_TINYDESK_AWS: "${AIRFLOW_CONN_TINYDESK_AWS}"
+      YOUTUBE_API_KEY: "${YOUTUBE_API_KEY}"
+      S3_BUCKET: "${S3_BUCKET}"
+      AIRFLOW__SMTP__SMTP_HOST: "${AIRFLOW__SMTP__SMTP_HOST}"
+      AIRFLOW__SMTP__SMTP_PORT: "${AIRFLOW__SMTP__SMTP_PORT}"
+      AIRFLOW__SMTP__SMTP_USER: "${AIRFLOW__SMTP__SMTP_USER}"
+      AIRFLOW__SMTP__SMTP_PASSWORD: "${AIRFLOW__SMTP__SMTP_PASSWORD}"
+      AIRFLOW__SMTP__SMTP_MAIL_FROM: "${AIRFLOW__SMTP__SMTP_MAIL_FROM}"
+      AIRFLOW__SMTP__SMTP_STARTTTLS: "${AIRFLOW__SMTP__SMTP_STARTTTLS}"
+      AIRFLOW__SMTP__SMTP_SSL: "${AIRFLOW__SMTP__SMTP_SSL}"
+      AIRFLOW__SCHEDULER__CATCHUP_BY_DEFAULT: "false"
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "false"
+  db:
+    image: postgres:13.0
+    restart: always
+    volumes:
+      # persist data
+      # https://github.com/docker-library/postgres/issues/116
+      # seems to be a windows issue, maybe try again on pure linux
+      # - ./db/data:/var/lib/postgresql/data:z
+      # startup scripts
+      - ./db/init:/docker-entrypoint-initdb.d
+    environment: 
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    depends_on: 
+      - db
+    restart: always
+    volumes:
+      # set up postgres connection on startup
+      - ./pgadmin/servers.json:/pgadmin4/servers.json
+    ports:
+      - 80:80
+    environment: 
+      PGADMIN_DEFAULT_PASSWORD: "${PGADMIN_DEFAULT_PASSWORD}"
+      PGADMIN_DEFAULT_EMAIL: "${PGADMIN_DEFAULT_EMAIL}"
