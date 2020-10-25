@@ -1,0 +1,7 @@
+WITH metrics_by_year AS 
+	(SELECT DATE_PART('year', PUBLISHED_AT) PUBLISHED_YEAR, SUM({{ params.metric }}) YEARLY_COUNT
+	FROM VIDEO
+	GROUP BY DATE_PART('year', PUBLISHED_AT)
+	ORDER BY DATE_PART('year', PUBLISHED_AT))
+SELECT JSON_AGG(metrics_by_year)
+FROM metrics_by_year;

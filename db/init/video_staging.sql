@@ -1,0 +1,26 @@
+-- Table: public.video_staging
+
+-- DROP TABLE public.video_staging;
+
+CREATE TABLE public.video_staging
+(
+    video_id character varying(15) COLLATE pg_catalog."default" NOT NULL,
+    published_at character varying(50) COLLATE pg_catalog."default",
+    title character varying(100) COLLATE pg_catalog."default",
+    description character varying COLLATE pg_catalog."default",
+    category_id character varying(5) COLLATE pg_catalog."default",
+    duration character varying(10) COLLATE pg_catalog."default",
+    definition character varying(5) COLLATE pg_catalog."default",
+    view_count integer,
+    like_count integer,
+    dislike_count integer,
+    favorite_count integer,
+    comment_count integer,
+    embed_html character varying COLLATE pg_catalog."default",
+    CONSTRAINT video_staging_pkey PRIMARY KEY (video_id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.video_staging
+    OWNER to postgres;
