@@ -38,7 +38,8 @@ class FileToPostgresOperator(BaseOperator):
         data = json.loads(data_str)
 
         cols = ['id', 'publishedAt', 'title', 'description', 'categoryId', 'duration', 'definition', 'viewCount', 'likeCount', 'dislikeCount', 'favoriteCount', 'commentCount', 'embedHtml']
-        rows = [tuple(d[k] for k in cols) for d in data]
+        # prevent duplicates in playlist
+        rows = set([tuple(d[k] for k in cols) for d in data])
         # insert into target table
         postgres = PostgresHook(postgres_conn_id=self.postgres_conn_id)
         postgres.insert_rows(
