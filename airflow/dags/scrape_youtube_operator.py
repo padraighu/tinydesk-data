@@ -40,6 +40,7 @@ class ScrapeYoutubeAPIOperator(BaseOperator):
         vid_page_token = None
         all_items_returned = False
         results = []
+        prev_video_ids = ''
         logging.info('Downloading data via API...')
         while not all_items_returned:
             request = youtube_service.playlistItems().list(
@@ -53,7 +54,8 @@ class ScrapeYoutubeAPIOperator(BaseOperator):
                 pl_page_token = response['nextPageToken']
             else:
                 all_items_returned = True
-            video_ids = ','.join([item['contentDetails']['videoId'] for item in response['items']])
+            video_ids = ','.join([item['contentDetails']['videoId'] for item in response['items'] if item['contentDetails']['videoId'] not in prev_video_ids])
+            prev_video_ids = prev_video_ids + video_ids + ','
             video_request = youtube_service.videos().list(
                 part='contentDetails,id,player,snippet,statistics,topicDetails',
                 id=video_ids,

@@ -16,8 +16,7 @@ CREATE TABLE public.video_staging
     dislike_count integer,
     favorite_count integer,
     comment_count integer,
-    embed_html character varying COLLATE pg_catalog."default",
-    CONSTRAINT video_staging_pkey PRIMARY KEY (video_id)
+    embed_html character varying COLLATE pg_catalog."default"
 )
 
 TABLESPACE pg_default;

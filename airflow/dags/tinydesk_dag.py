@@ -55,10 +55,18 @@ t2 = PostgresOperator(
     dag=dag
 )
 
+t13 = PostgresOperator(
+    task_id='empty_staging_table_at_home',
+    sql='DELETE FROM VIDEO_STAGING_AT_HOME',
+    postgres_conn_id='tinydesk_postgres',
+    dag=dag
+)
+
 t3 = FileToPostgresOperator(
     task_id='load_to_staging',
     filename='tinydesk_api_data.json',
     postgres_conn_id='tinydesk_postgres',
+    table='video_staging',
     aws_conn_id='tinydesk_aws',
     bucket_name=os.environ['S3_BUCKET'],
     dag=dag
@@ -68,6 +76,7 @@ t12 = FileToPostgresOperator(
     task_id='load_to_staging_at_home',
     filename='tinydesk_at_home_api_data.json',
     postgres_conn_id='tinydesk_postgres',
+    table='video_staging_at_home',
     aws_conn_id='tinydesk_aws',
     bucket_name=os.environ['S3_BUCKET'],
     dag=dag
@@ -137,6 +146,6 @@ t10 = PostgresToS3Operator(
 
 t1 >> t2 >> t3
 
-t11 >> t2 >> t12
+t11 >> t13 >> t12
 
 [t3, t12] >> t4 >> [t5, t6, t7, t9, t10]

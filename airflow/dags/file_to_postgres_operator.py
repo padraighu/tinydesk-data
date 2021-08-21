@@ -16,6 +16,7 @@ class FileToPostgresOperator(BaseOperator):
             self,
             filename,
             postgres_conn_id,
+            table,
             aws_conn_id,
             bucket_name,
             *args, **kwargs) -> None:
@@ -24,6 +25,7 @@ class FileToPostgresOperator(BaseOperator):
         self.aws_conn_id = aws_conn_id
         self.filename = filename
         self.bucket_name = bucket_name
+        self.table = table
 
     def execute(self, context):
         # read json data from s3
@@ -43,6 +45,6 @@ class FileToPostgresOperator(BaseOperator):
         # insert into target table
         postgres = PostgresHook(postgres_conn_id=self.postgres_conn_id)
         postgres.insert_rows(
-            table='video_staging',
+            table=self.table,
             rows=rows
         )
