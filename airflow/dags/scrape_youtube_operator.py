@@ -73,7 +73,7 @@ class ScrapeYoutubeAPIOperator(BaseOperator):
                 'definition': item['contentDetails']['definition'],
                 'viewCount': item['statistics']['viewCount'],
                 'likeCount': item['statistics']['likeCount'],
-                'dislikeCount': item['statistics']['dislikeCount'],
+                'dislikeCount': None,  # Youtube API no longer provides this field https://developers.google.com/youtube/v3/revision_history#december-15,-2021
                 'favoriteCount': item['statistics']['favoriteCount'],
                 'commentCount': item['statistics']['commentCount'],
                 'embedHtml': item['player']['embedHtml']
