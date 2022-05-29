@@ -111,6 +111,17 @@ t6 = PostgresToS3Operator(
     dag=dag
 )
 
+t14 = PostgresToS3Operator(
+    task_id='top_10_liked_to_s3',
+    sql='top_videos.sql',
+    params={'metric': 'LIKE_COUNT'},
+    filename='tinydesk_top_10_liked.json',
+    postgres_conn_id='tinydesk_postgres',
+    aws_conn_id='tinydesk_aws',
+    bucket_name=os.environ['S3_BUCKET'],
+    dag=dag
+)
+
 t7 = PostgresToS3Operator(
     task_id='video_metrics_to_s3',
     sql='video_metrics.sql',
@@ -148,4 +159,4 @@ t1 >> t2 >> t3
 
 t11 >> t13 >> t12
 
-[t3, t12] >> t4 >> [t5, t6, t7, t9, t10]
+[t3, t12] >> t4 >> [t5, t6, t7, t9, t10, t14]
